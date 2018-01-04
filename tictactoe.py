@@ -6,19 +6,19 @@
 module. The AI player chooses it's move using the minimax algorithm.
 
 How the minimax function works:
-1. Identify all the empty positions on the board.
-2. Loop through them and play in that position on a copy of the given board.
-3. Score the board: 1 for a win, -1 for a loss, 0 for a tie.
+1. Identify all the empty positions on the given board.
+2. Play in each empty position on a copy of the board.
+3. Score the board for the current player: 1 for a win, -1 for a loss,
+0 for a tie.
 4. If the board is not at a terminal state (game not over), recursively
-run the function on the new board for the other player until a terminal state
-is reached. In this case the score is negated so that it represents the
-favorability of the move from the perspective of the maximizing player.
-5. Choose the maximum score and return it along with the position that resulted
-in that score. A significant amount of searching is eliminated by returning
-the score as soon as a score of 1 (best possible score) is found.
+run the function on the new board for the opponent until a terminal state
+is reached. The score is negated so that it represents the favorability
+of the move from the perspective of the maximizing player.
+5. Choose the maximum score and return it along with the position that
+resulted in that score.
 
-If the bot goes first the minimax function gets executed over 50,000 times
-before a move is chosen, which is why it takes a couple seconds.
+If the bot goes first, the minimax function gets executed over 50,000
+times before a move is chosen, which is why it takes a couple seconds.
 """
 
 from tictactoe_ui import TicTacToeUI
