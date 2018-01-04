@@ -2,7 +2,7 @@
 #
 # tictactoe.py
 
-"""A Tic tac toe game with an unbeatable AI that uses the python turtle
+"""A tic tac toe game with an unbeatable AI that uses the python turtle
 module. The AI player chooses it's move using the minimax algorithm.
 
 How the minimax function works:
@@ -11,9 +11,9 @@ How the minimax function works:
 3. Score the board for the current player: 1 for a win, -1 for a loss,
 0 for a tie.
 4. If the board is not at a terminal state (game not over), recursively
-run the function on the new board for the opponent until a terminal state
-is reached. The score is negated so that it represents the favorability
-of the move from the perspective of the maximizing player.
+run the function on the new board for the opponent until a terminal
+state is reached. The score is negated so that it represents the
+favorability of the move from the perspective of the maximizing player.
 5. Choose the maximum score and return it along with the position that
 resulted in that score.
 

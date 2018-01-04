@@ -1,6 +1,6 @@
 # tictactoe-turtle
 
-A Tic tac toe game with an unbeatable AI that uses the python turtle module for
+A tic tac toe game with an unbeatable AI that uses the python turtle module for
 the user interface. The AI player uses the
 [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm.
 
