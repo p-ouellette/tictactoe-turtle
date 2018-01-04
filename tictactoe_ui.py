@@ -5,6 +5,8 @@
 """TicTacToeUI class to handle all parts of the user interface.
 """
 
+from __future__ import print_function
+
 import turtle
 
 
@@ -49,7 +51,8 @@ class TicTacToeUI:
     def print_stats(self, usr_wins, ties, bot_wins):
         """Display the games won/tied/lost text."""
         self.t_stats.clear()
-        stats = f"PLAYER: {usr_wins}   TIES: {ties}   BOT: {bot_wins}"
+        stats = "PLAYER: {}   TIES: {}   BOT: {}".format(usr_wins, ties,
+                                                         bot_wins)
         self.t_stats.write(stats, *self.text_args)
 
     def draw_x(self, position):

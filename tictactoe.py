@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #
 # tictactoe.py
 
@@ -20,6 +20,11 @@ resulted in that score.
 If the bot goes first, the minimax function gets executed over 50,000
 times before a move is chosen, which is why it takes a couple seconds.
 """
+
+# For Python 2 compatability
+from __future__ import print_function
+import turtle
+from copy import copy
 
 from tictactoe_ui import TicTacToeUI
 from random import shuffle
@@ -48,7 +53,7 @@ class TicTacToe:
             self.bot_take_turn()
         self.UI.print_turn('user')
         self.UI.wn.onclick(self.play_round)
-        self.UI.wn.mainloop()
+        turtle.mainloop()
 
     def play_round(self, x, y):
         """Play a round of tic tac toe starting with a user move in the
@@ -119,11 +124,11 @@ class TicTacToe:
         """Update the board with a move that the bot chooses."""
         self.UI.print_turn('bot')
         move = self.minimax_choose_pos(self.board, 'o')
-        position = move[0]
+        pos = move[0]
         score = move[1]
-        self.board[position] = 'o'
-        print(f"Bot marks section {position} (minimax score {score})")
-        self.UI.draw_o(position)
+        self.board[pos] = 'o'
+        print("Bot marks section {} (minimax score {})".format(pos, score))
+        self.UI.draw_o(pos)
 
     def minimax_choose_pos(self, board, turn):
         """Return a tuple with the best position for the given player to
@@ -138,7 +143,7 @@ class TicTacToe:
         max_score = -10
         for pos in empty_pos:
             # Play on a new board
-            new_board = board.copy()
+            new_board = copy(board)
             new_board[pos] = turn
             # Score the board
             if self.check_if_won(new_board, turn):
