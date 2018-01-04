@@ -51,7 +51,7 @@ class TicTacToe:
         # Start the game
         if self.who_first == 'o':
             self.bot_take_turn()
-        self.UI.print_turn('user')
+        self.UI.print_top_text("Your turn", 'blue')
         self.UI.wn.onclick(self.play_round)
         turtle.mainloop()
 
@@ -88,7 +88,7 @@ class TicTacToe:
 
         # Reactivate event binding
         self.UI.wn.onclick(self.play_round)
-        self.UI.print_turn('user')
+        self.UI.print_top_text("Your turn", 'blue')
 
     def get_position(self, x, y):
         """Return the grid section (0-8) of the given coordinates."""
@@ -122,7 +122,7 @@ class TicTacToe:
 
     def bot_take_turn(self):
         """Update the board with a move that the bot chooses."""
-        self.UI.print_turn('bot')
+        self.UI.print_top_text("Bot's turn", 'red')
         move = self.minimax_choose_pos(self.board, 'o')
         pos = move[0]
         score = move[1]
@@ -197,7 +197,7 @@ class TicTacToe:
         # Start next game
         if self.who_first == 'o':
             self.bot_take_turn()
-        self.UI.print_turn('user')
+        self.UI.print_top_text("Your turn", 'blue')
         self.UI.wn.onclick(self.play_round)
 
 
