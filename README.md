@@ -10,4 +10,4 @@ turtle module.
 * [tictactoe.py](tictactoe.py) handles the overall control of the game and the
 bot AI. Run this file.
 
-Requires python 3.6+ and tkinter (probably included with python).
+Requires Python 3.6+ and Tkinter (probably included with python).
