@@ -2,7 +2,7 @@
 #
 # tictactoe.py
 
-"""A tic tac toe game with an unbeatable AI that uses the python turtle
+"""A tic tac toe game with an unbeatable AI that uses the Python turtle
 module. The AI player chooses it's move using the minimax algorithm.
 
 How the minimax function works:

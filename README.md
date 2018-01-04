@@ -1,6 +1,6 @@
 # tictactoe-turtle
 
-A tic tac toe game with an unbeatable AI that uses the python turtle module for
+A tic tac toe game with an unbeatable AI that uses the Python turtle module for
 the user interface. The AI player uses the
 [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm.
 
@@ -10,4 +10,4 @@ turtle module.
 * [tictactoe.py](tictactoe.py) handles the overall control of the game and the
 bot AI. Run this file.
 
-Requires Python 3.6+ and Tkinter (probably included with python).
+Requires Python 3.6+ and Tkinter (probably included with Python).
