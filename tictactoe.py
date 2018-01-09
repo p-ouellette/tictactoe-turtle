@@ -16,9 +16,6 @@ state is reached. The score is negated so that it represents the
 favorability of the move from the perspective of the maximizing player.
 5. Choose the maximum score and return it along with the position that
 resulted in that score.
-
-If the bot goes first, the minimax function gets executed over 50,000
-times before a move is chosen, which is why it takes a couple seconds.
 """
 
 # For Python 2 compatability
@@ -31,6 +28,8 @@ from random import shuffle
 
 
 class TicTacToe:
+    # TODO: Accept arguments for players (an object), allow bot-bot and
+    # human-human games
     def __init__(self):
         self.UI = TicTacToeUI()
         # Board and win variables
@@ -70,23 +69,20 @@ class TicTacToe:
             self.UI.wn.onclick(self.play_round)
             return
 
-        self.usr_take_turn(usr_pos)
-        if self.check_if_won(self.board, 'x'):
-            self.end_game('usrwin')
-            return
-        if None not in self.board:
-            self.end_game('tie')
-            return
+        for player in ['x', 'o']:
+            if player == 'x':
+                self.usr_take_turn(usr_pos)
+            else:
+                self.bot_take_turn()
 
-        self.bot_take_turn()
-        if self.check_if_won(self.board, 'o'):
-            self.end_game('botwin')
-            return
-        if None not in self.board:
-            self.end_game('tie')
-            return
+            if self.check_if_won(self.board, player):
+                self.end_game(player)
+                return
+            if None not in self.board:
+                self.end_game('tie')
+                return
 
-        # Reactivate event binding
+        # Reactivate event binding and let the user know it's their turn
         self.UI.wn.onclick(self.play_round)
         self.UI.print_top_text("Your turn", 'blue')
 
@@ -122,12 +118,15 @@ class TicTacToe:
 
     def bot_take_turn(self):
         """Update the board with a move that the bot chooses."""
+        self.minimax_calls = 0
         self.UI.print_top_text("Bot's turn", 'red')
         move = self.minimax_choose_pos(self.board, 'o')
         pos = move[0]
         score = move[1]
         self.board[pos] = 'o'
-        print("Bot marks section {} (minimax score {})".format(pos, score))
+        print("Bot marks section", pos)
+        print("Minimax score: {}, function calls: {}".format(score,
+              self.minimax_calls))
         self.UI.draw_o(pos)
 
     def minimax_choose_pos(self, board, turn):
@@ -137,6 +136,7 @@ class TicTacToe:
         a loss if the opponent plays well, and 0 means the game will end
         in a tie.
         """
+        self.minimax_calls += 1
         opponent = 'o' if turn == 'x' else 'x'
         empty_pos = [pos for pos in range(9) if not board[pos]]
         shuffle(empty_pos)
@@ -171,18 +171,18 @@ class TicTacToe:
         return any(all(board[pos] == player for pos in line) for line in
                    self.win_lines)
 
-    def end_game(self, outcome):
-        """Show game over text and update the stats based on the outcome
-        ('usrwin', 'botwin', or 'tie').
+    def end_game(self, winner):
+        """Show game over text and update the stats based on the winner
+        ('x', 'o', or 'tie').
         Bind a screen click event to reset().
         """
-        if outcome == 'usrwin':
+        if winner == 'x':
             self.usr_wins += 1
-        elif outcome == 'botwin':
+        elif winner == 'o':
             self.bot_wins += 1
-        elif outcome == 'tie':
+        elif winner == 'tie':
             self.ties += 1
-        self.UI.print_game_over_text(outcome)
+        self.UI.print_game_over_text(winner)
         self.UI.print_stats(self.usr_wins, self.ties, self.bot_wins)
         # Reset the board for the next game
         self.UI.wn.onclick(self.reset)

@@ -76,12 +76,12 @@ class TicTacToeUI:
         self.t_top_text.pencolor(color)
         self.t_top_text.write(text, *self.text_args)
 
-    def print_game_over_text(self, outcome):
-        """Display the winner based on the game outcome ('usrwin',
-        'botwin', or 'tie').
+    def print_game_over_text(self, winner):
+        """Display game over text based on the winner ('x', 'o', or
+        'tie').
         """
-        usr_won = outcome == 'usrwin'
-        bot_won = outcome == 'botwin'
+        usr_won = winner == 'x'
+        bot_won = winner == 'o'
         txt_color = 'blue' if usr_won else 'red' if bot_won else 'black'
         msg = "YOU WIN!" if usr_won else "BOT WINS!" if bot_won else "TIE GAME"
         self.print_top_text(msg, txt_color)
