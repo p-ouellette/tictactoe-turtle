@@ -10,9 +10,9 @@ turtle module.
 * [tictactoe.py](tictactoe.py) handles the overall control of the game and the
 bot AI.
 
-To run it (assuming the project folder is saved in the home directory):
+To run it (after moving into the directory):
 
-    python tictactoe-turtle/tictactoe.py
+    python tictactoe.py
 
-It works with both Python 2 and 3.
-On Windows you may have to use the full path to the Python executable.
+On Windows you may have to use the full path to the Python executable. It works
+with both Python 2 and 3.
