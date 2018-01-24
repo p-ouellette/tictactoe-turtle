@@ -5,8 +5,8 @@ the user interface. The AI player uses the
 [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm.
 
 There are two files.
-* [tictactoe_ui.py](tictactoe_ui.py) handles the user interface using the
-turtle module.
+* [ttt_util.py](ttt_util.py) contains the TicTacToeUI class that handles the
+user interface using the turtle module and human and bot player classes.
 * [tictactoe.py](tictactoe.py) handles the overall control of the game and the
 bot AI.
 
