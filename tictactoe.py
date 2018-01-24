@@ -4,87 +4,118 @@
 
 """A tic tac toe game with an unbeatable AI that uses the Python turtle
 module. The AI player chooses it's move using the minimax algorithm.
-
-How the minimax function works:
-1. Identify all the empty positions on the given board.
-2. Play in each empty position on a copy of the board.
-3. Score the board for the current player: 1 for a win, -1 for a loss,
-0 for a tie.
-4. If the board is not at a terminal state (game not over), recursively
-run the function on the new board for the opponent until a terminal
-state is reached. The score is negated so that it represents the
-favorability of the move from the perspective of the maximizing player.
-5. Choose the maximum score and return it along with the position that
-resulted in that score.
 """
 
-# For Python 2 compatability
+# Python 2 compatability
 from __future__ import print_function
-import turtle
+from turtle import mainloop
 from copy import copy
 
-from tictactoe_ui import TicTacToeUI
+from ttt_util import TicTacToeUI, HumanPlayer, BotPlayer
 from random import shuffle
 
 
 class TicTacToe:
-    # TODO: Accept arguments for players (an object), allow bot-bot and
-    # human-human games
-    def __init__(self):
-        self.UI = TicTacToeUI()
-        # Board and win variables
-        self.board = [None] * 9
-        self.usr_wins = 0
-        self.bot_wins = 0
-        self.ties = 0
-        # All combinations of board positions that result in a win
-        self.win_lines = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8],
-            [0, 3, 6], [1, 4, 7], [2, 5, 8],
-            [0, 4, 8], [2, 4, 6]
-        ]
-        self.who_first = 'x'
-        # Draw the grid and write the stats text
-        self.UI.draw_grid()
-        self.UI.print_stats(self.usr_wins, self.ties, self.bot_wins)
-        # Start the game
-        if self.who_first == 'o':
-            self.bot_take_turn()
-        self.UI.print_top_text("Your turn", 'blue')
-        self.UI.wn.onclick(self.play_round)
-        turtle.mainloop()
-
-    def play_round(self, x, y):
-        """Play a round of tic tac toe starting with a user move in the
-        grid section containing the click coordinates.
+    def __init__(self, player1, player2):
+        """Initialize a game of tic tac toe with the given players
+        (HumanPlayer or BotPlayer objects). The player with the first
+        move alternates each game, starting with player1.
         """
-        # Remove event binding so play_round can't be called a second
-        # time before it's done
+        if player1.mark == player2.mark:
+            raise ValueError("players must not use the same mark")
+        self.p1 = player1
+        self.p2 = player2
+        self.turn_order = [self.p1, self.p2]
+        self.board = [None] * 9
+        self.ties = 0
+        self.win_lines = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
+                          [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
+        self.UI = TicTacToeUI()
+        self.UI.draw_grid()
+        self.print_stats()
+        self.start_game()
+        mainloop()
+
+    def start_game(self):
+        """Call the correct game function based on the player types."""
+        self.players = copy(self.turn_order)
+        first = self.turn_order[0]
+        if all(player.player_type == 'human' for player in self.players):
+            self.UI.display(first.name, 'top', first.color)
+            self.UI.wn.onclick(self.human_game)
+        elif all(player.player_type == 'bot' for player in self.players):
+            self.bot_game()
+        else:
+            if first.player_type == 'bot':
+                self.bot_take_turn(first)
+                self.players.reverse()
+            self.UI.wn.onclick(self.human_bot_game)
+
+    def human_game(self, x, y):
+        """Start a game with two human players. Accepts the coordinates
+        of a user click passed by an onclick call.
+        """
+        # Remove event binding
         self.UI.wn.onclick(None)
-
         # Get the board section of the clicked point
-        usr_pos = self.get_position(x, y)
+        pos = self.get_position(x, y)
         # Exit if click is outside the grid or the grid section isn't empty
-        if usr_pos is None or self.board[usr_pos]:
-            self.UI.wn.onclick(self.play_round)
+        if pos is None or self.board[pos] is not None:
+            self.UI.wn.onclick(self.human_game)
             return
+        player = self.players[0]
+        self.take_turn(player, pos)
+        if self.check_if_won(self.board, player.mark):
+            self.end_game(player)
+            return
+        elif None not in self.board:
+            self.end_game('tie')
+            return
+        self.players.reverse()
+        # Reactivate event binding and display who's turn it is
+        self.UI.wn.onclick(self.human_game)
+        self.UI.display(self.players[0].name, 'top', self.players[0].color)
 
-        for player in ['x', 'o']:
-            if player == 'x':
-                self.usr_take_turn(usr_pos)
+    def bot_game(self):
+        """Start a game with two bot players. Should result in a tie
+        every time.
+        """
+        while None in self.board:
+            self.bot_take_turn(self.players[0])
+            if self.check_if_won(self.board, self.players[0].mark):
+                self.end_game(self.players[0])
+                return
+            self.players.reverse()
+        self.end_game('tie')
+
+    def human_bot_game(self, x, y):
+        """Start a game with a human and bot player. Accepts the
+        coordinates of a user click passed by an onclick call.
+        """
+        self.UI.wn.onclick(None)
+        usr_pos = self.get_position(x, y)
+        if usr_pos is None or self.board[usr_pos] is not None:
+            self.UI.wn.onclick(self.human_bot_game)
+            return
+        for player in self.players:
+            if player.player_type == 'human':
+                self.take_turn(player, usr_pos)
             else:
-                self.bot_take_turn()
-
-            if self.check_if_won(self.board, player):
+                self.bot_take_turn(player)
+            if self.check_if_won(self.board, player.mark):
                 self.end_game(player)
                 return
-            if None not in self.board:
+            elif None not in self.board:
                 self.end_game('tie')
                 return
+        self.UI.wn.onclick(self.human_bot_game)
 
-        # Reactivate event binding and let the user know it's their turn
-        self.UI.wn.onclick(self.play_round)
-        self.UI.print_top_text("Your turn", 'blue')
+    def print_stats(self):
+        """Print or update the stats text."""
+        stats_text = "{} ({}): {}   Ties: {}   {} ({}): {}".format(
+            self.p1.name, self.p1.mark, self.p1.wins, self.ties, self.p2.name,
+            self.p2.mark, self.p2.wins)
+        self.UI.display(stats_text, 'bottom')
 
     def get_position(self, x, y):
         """Return the grid section (0-8) of the given coordinates."""
@@ -110,31 +141,38 @@ class TicTacToe:
             position = None
         return position
 
-    def usr_take_turn(self, position):
-        """Update the board with the user's move at the given position."""
-        self.board[position] = 'x'
-        print("User marks section", position)
-        self.UI.draw_x(position)
+    def take_turn(self, player, position):
+        """Update the board with player's move at the given position."""
+        self.board[position] = player.mark
+        print(player.name, "marks section", position)
+        self.UI.mark(player.mark, position, player.color)
 
-    def bot_take_turn(self):
-        """Update the board with a move that the bot chooses."""
+    def bot_take_turn(self, player):
+        """Take a turn with the given player at the position chosen by
+        the minimax algorithm.
+        """
         self.minimax_calls = 0
-        self.UI.print_top_text("Bot's turn", 'red')
-        move = self.minimax_choose_pos(self.board, 'o')
-        pos = move[0]
-        score = move[1]
-        self.board[pos] = 'o'
-        print("Bot marks section", pos)
-        print("Minimax score: {}, function calls: {}".format(score,
-              self.minimax_calls))
-        self.UI.draw_o(pos)
+        pos, score = self.minimax_choose_pos(self.board, player.mark)
+        print("Minimax score: {}, function calls: {}".format(
+            score, self.minimax_calls))
+        self.take_turn(player, pos)
 
     def minimax_choose_pos(self, board, turn):
-        """Return a tuple with the best position for the given player to
-        play on the given board and the score associated with that move.
-        A score of 1 means the player has a guaranteed win, -1 indicates
-        a loss if the opponent plays well, and 0 means the game will end
-        in a tie.
+        """Return a tuple with the best position for the player with the
+        given mark to play on the given board and the score associated
+        with that move. A score of 1 means the player has a guaranteed
+        win, -1 indicates a loss if the opponent plays well, and 0 means
+        the game will end in a tie.
+
+        How it works:
+        1. Play in each empty position on a copy of the board.
+        2. If the board is at a terminal state, score it for the current
+           player: 1 for a win, -1 for a loss, 0 for a tie.
+        3. If the board is not at a terminal state, recursively run the
+           function on the new board for the opponent until a terminal
+           state is reached.
+        4. Return the maximum score along with the position that
+           resulted in that score.
         """
         self.minimax_calls += 1
         opponent = 'o' if turn == 'x' else 'x'
@@ -164,46 +202,43 @@ class TicTacToe:
                 max_score = score
         return (best_pos, max_score)
 
-    def check_if_won(self, board, player):
-        """Return True if the given player ('x' or 'o') has won."""
-        # Check if all positions in line are occupied by the given
-        # player for any of the lines in win_lines
-        return any(all(board[pos] == player for pos in line) for line in
-                   self.win_lines)
+    def check_if_won(self, board, mark):
+        """Return True if the player with the given mark has won."""
+        return any(all(board[p] == mark for p in l) for l in self.win_lines)
 
     def end_game(self, winner):
         """Show game over text and update the stats based on the winner
-        ('x', 'o', or 'tie').
+        (a player object or 'tie').
         Bind a screen click event to reset().
         """
-        if winner == 'x':
-            self.usr_wins += 1
-        elif winner == 'o':
-            self.bot_wins += 1
-        elif winner == 'tie':
+        if winner == 'tie':
             self.ties += 1
-        self.UI.print_game_over_text(winner)
-        self.UI.print_stats(self.usr_wins, self.ties, self.bot_wins)
-        # Reset the board for the next game
+            msg = "Tie Game"
+            color = 'black'
+        else:
+            winner.wins += 1
+            msg = "{} Wins!".format(winner.name)
+            color = winner.color
+        self.UI.display(msg, 'top', color)
+        print(msg, "\n")
+        self.print_stats()
         self.UI.wn.onclick(self.reset)
 
-    def reset(self, *_):  # We dont't care where the user clicks
+    def reset(self, *_):  # Ignore coordinates from onclick call
         """Clear game over text, reset board, and start a new game."""
+        self.UI.wn.onclick(None)
         self.UI.t_top_text.clear()
         self.UI.t_marks.clear()
         self.board = [None] * 9
-        # Switch who goes first
-        self.who_first = 'x' if self.who_first == 'o' else 'o'
-        # Start next game
-        if self.who_first == 'o':
-            self.bot_take_turn()
-        self.UI.print_top_text("Your turn", 'blue')
-        self.UI.wn.onclick(self.play_round)
+        self.turn_order.reverse()
+        self.start_game()
 
 
 def main():
-    """Initialize a game of tic tac toe."""
-    ttt = TicTacToe()
+    """Initialize two players and game of tic tac toe."""
+    p1 = HumanPlayer("Player", 'x')
+    p2 = BotPlayer("Bot", 'o')
+    game = TicTacToe(p1, p2)
 
 
 if __name__ == '__main__':
