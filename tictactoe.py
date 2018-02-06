@@ -39,7 +39,7 @@ class TicTacToe:
     def start_game(self):
         """Call the correct game function based on the player types."""
         self.players = copy(self.turn_order)
-        first = self.turn_order[0]
+        first = self.players[0]
         if all(player.player_type == 'human' for player in self.players):
             self.UI.display(first.name, 'top', first.color)
             self.UI.wn.onclick(self.human_game)
