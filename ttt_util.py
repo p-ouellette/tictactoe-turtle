@@ -37,14 +37,6 @@ class TicTacToeUI:
         turtle.goto(x, y)
         turtle.pd()
 
-    def draw_grid(self):
-        """Draw the playing grid."""
-        for cor in [75, -75]:
-            self._mv(self.t_grid, -225, cor)
-            self.t_grid.setx(225)
-            self._mv(self.t_grid, cor, 225)
-            self.t_grid.sety(-225)
-
     def _draw_x(self, x, y):
         self._mv(self.t_marks, x + 50, y + 50)
         self.t_marks.goto(self.t_marks.xcor() - 100, self.t_marks.ycor() - 100)
@@ -54,6 +46,14 @@ class TicTacToeUI:
     def _draw_o(self, x, y):
         self._mv(self.t_marks, x, y - 50)
         self.t_marks.circle(50)
+
+    def draw_grid(self):
+        """Draw the playing grid."""
+        for cor in [75, -75]:
+            self._mv(self.t_grid, -225, cor)
+            self.t_grid.setx(225)
+            self._mv(self.t_grid, cor, 225)
+            self.t_grid.sety(-225)
 
     def mark(self, mark, position, color='black'):
         """Draw the given mark ('x' or 'o') at the given position in the
