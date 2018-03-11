@@ -6,7 +6,7 @@
 module. The AI player chooses it's move using the minimax algorithm.
 """
 
-# Python 2 compatability
+# Python 2 compatibility
 from __future__ import print_function
 from turtle import mainloop
 from copy import copy
