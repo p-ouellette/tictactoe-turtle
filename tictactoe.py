@@ -235,7 +235,7 @@ class TicTacToe:
 
 
 def main():
-    """Initialize two players and game of tic tac toe."""
+    """Initialize two players and a game of tic tac toe."""
     p1 = HumanPlayer("Player", 'x')
     p2 = BotPlayer("Bot", 'o')
     game = TicTacToe(p1, p2)
