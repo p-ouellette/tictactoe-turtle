@@ -14,7 +14,6 @@ bot AI.
 
 To start a game (after moving into the project directory):
 
-    python tictactoe.py
+    python3 tictactoe.py
 
-On Windows you may have to use the full path to the Python executable. It works
-with both Python 2 and 3.
+On Windows you may have to use the full path to the Python executable.

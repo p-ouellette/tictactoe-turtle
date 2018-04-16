@@ -1,14 +1,8 @@
-#!/usr/bin/env python
-#
-# tictactoe.py
+#!/usr/bin/env python3
 
 """A tic tac toe game with an unbeatable AI that uses the Python turtle
 module. The AI player chooses it's move using the minimax algorithm.
 """
-
-# Python 2 compatibility
-from __future__ import print_function
-from turtle import mainloop
 
 from ttt_util import TicTacToeUI, HumanPlayer, BotPlayer
 from random import shuffle
@@ -33,11 +27,11 @@ class TicTacToe:
         self.UI.draw_grid()
         self.print_stats()
         self.start_game()
-        mainloop()
+        self.UI.wn.mainloop()
 
     def start_game(self):
         """Call the correct game function based on the player types."""
-        self.players = self.turn_order[:]
+        self.players = self.turn_order.copy()
         first = self.players[0]
         if all(player.player_type == 'human' for player in self.players):
             self.UI.display(first.name, 'top', first.color)
@@ -111,9 +105,9 @@ class TicTacToe:
 
     def print_stats(self):
         """Print or update the stats text."""
-        stats_text = "{} ({}): {}   Ties: {}   {} ({}): {}".format(
-            self.p1.name, self.p1.mark, self.p1.wins, self.ties, self.p2.name,
-            self.p2.mark, self.p2.wins)
+        stats_text = (
+            f"{self.p1.name} ({self.p1.mark}): {self.p1.wins}   Ties: "
+            f"{self.ties}   {self.p2.name} ({self.p2.mark}): {self.p2.wins}")
         self.UI.display(stats_text, 'bottom')
 
     def get_position(self, x, y):
@@ -152,8 +146,7 @@ class TicTacToe:
         """
         self.minimax_calls = 0
         pos, score = self.minimax_choose_pos(self.board, player.mark)
-        print("Minimax score: {}, function calls: {}".format(
-            score, self.minimax_calls))
+        print(f"Minimax score: {score}, function calls: {self.minimax_calls}")
         self.take_turn(player, pos)
 
     def minimax_choose_pos(self, board, turn):
@@ -180,7 +173,7 @@ class TicTacToe:
         max_score = -10
         for pos in empty_pos:
             # Play on a new board
-            new_board = board[:]
+            new_board = board.copy()
             new_board[pos] = turn
             # Score the board
             if self.check_if_won(new_board, turn):

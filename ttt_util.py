@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-#
-# ttt_util.py
-
 """TicTacToeUI, HumanPlayer, and BotPlayer classes to handle the user
 interface and players."""
 
