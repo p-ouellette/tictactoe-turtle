@@ -9,7 +9,6 @@ module. The AI player chooses it's move using the minimax algorithm.
 # Python 2 compatibility
 from __future__ import print_function
 from turtle import mainloop
-from copy import copy
 
 from ttt_util import TicTacToeUI, HumanPlayer, BotPlayer
 from random import shuffle
@@ -38,7 +37,7 @@ class TicTacToe:
 
     def start_game(self):
         """Call the correct game function based on the player types."""
-        self.players = copy(self.turn_order)
+        self.players = self.turn_order[:]
         first = self.players[0]
         if all(player.player_type == 'human' for player in self.players):
             self.UI.display(first.name, 'top', first.color)
@@ -181,7 +180,7 @@ class TicTacToe:
         max_score = -10
         for pos in empty_pos:
             # Play on a new board
-            new_board = copy(board)
+            new_board = board[:]
             new_board[pos] = turn
             # Score the board
             if self.check_if_won(new_board, turn):
